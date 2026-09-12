@@ -1,0 +1,23 @@
+-- DIGICASH backend - schema evolution.
+--
+-- Rationale (confirmed against the actual Android contract, not invented):
+-- Android's TransactionSyncRequest (the payload sent to POST /api/sync)
+-- includes the SENDER's full public key on every transaction
+-- (senderPublicKeyId), but never the RECEIVER's public key - the
+-- receiver is only ever identified by their fingerprint string
+-- (receiverId). This is a real, existing asymmetry in the Android app's
+-- already-built contract, not something introduced on the backend side.
+--
+-- As a result, when this backend first learns about a receiver purely
+-- from appearing as the "receiverId" of someone else's transaction, it
+-- has no public key to store for that device yet - only a fingerprint.
+-- public_key_base64 must therefore be allowed to start NULL for such
+-- fingerprint-only-referenced devices. It is backfilled automatically
+-- the first time that same fingerprint is later seen acting as a SENDER
+-- (whose full key is always present in the request), by
+-- DeviceService.getOrCreateDevice(...) in the service layer.
+--
+-- V1 has already been applied and must never be edited retroactively -
+-- this ALTER is a new, additive migration on top of it.
+
+ALTER TABLE device MODIFY COLUMN public_key_base64 TEXT NULL;
