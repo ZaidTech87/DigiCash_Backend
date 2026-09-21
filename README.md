@@ -1,5 +1,7 @@
 # DigiCash Backend
 
+Deployed Link: https://digicash-backend.onrender.com
+
 Spring Boot REST backend for **DIGICASH — Secure Offline Digital Cash System for Peer-to-Peer Mobile Payment**.
 
 This is a **separate, standalone project** from the DigiCash Android app. It communicates with the Android client only over HTTP — the two projects do not share code or a repository. Android's existing Retrofit client already expects exactly the API this backend implements.
